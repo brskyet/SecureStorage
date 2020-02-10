@@ -9,6 +9,9 @@
 #DB
 Storage.db
 
+#Migrations
+Migrations/
+
 # User-specific files
 *.suo
 *.user

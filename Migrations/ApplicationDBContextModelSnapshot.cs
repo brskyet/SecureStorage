@@ -23,6 +23,8 @@ namespace SecureStorage.Migrations
 
                     b.Property<int>("Age");
 
+                    b.Property<string>("Email");
+
                     b.Property<string>("Login");
 
                     b.Property<string>("Password");

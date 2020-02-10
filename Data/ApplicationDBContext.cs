@@ -6,7 +6,8 @@ namespace SecureStorage.Data
     {
         public DbSet<User> Users { get; set; }
 
-        public ApplicationDBContext()
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
+            : base(options)
         {
             Database.EnsureCreated();
         }

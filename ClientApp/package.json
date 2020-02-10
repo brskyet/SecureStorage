@@ -1,5 +1,5 @@
 {
-  "name": "SecureStorage",
+  "name": "secure_storage",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
