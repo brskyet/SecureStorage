@@ -9,7 +9,7 @@ namespace SecureStorage.Data
     public class User
     {
         public Guid UserId { set; get; }
-        public string Login { set; get; }
+        public string Username { set; get; }
         public string Email { set; get; }
         public string Password { set; get; }
         public int Age { set; get; }

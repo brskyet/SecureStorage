@@ -23,17 +23,26 @@ namespace SecureStorage.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("Registration")]
-        public IActionResult Registration([FromBody] UserModel usr)
+        [HttpPost("Signup")]
+        public IActionResult Signup([FromBody] SignupModel usr)
         {
             if(ModelState.IsValid)
             {
                 try
                 {
                     var model = _mapper.Map<User>(usr);
-                    _context.Add(model);
-                    _context.SaveChanges();
-                    return Ok("Registered successfully!");
+                    bool userExist = _context.Users.Any(x => x.Username == model.Username);
+                    bool emailExist = _context.Users.Any(x => x.Email == model.Email);
+                    if (userExist == false && emailExist == false)
+                    {
+                        _context.Add(model);
+                        _context.SaveChanges();
+                        return Ok("Registered successfully!");
+                    }
+                    else
+                    {
+                        return BadRequest(emailExist == true ? "Email is already in use." : "Username is already in use.");
+                    }
                 }
                 catch
                 {

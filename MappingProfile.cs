@@ -12,7 +12,7 @@ namespace SecureStorage
     {
         public MappingProfile()
         {
-            CreateMap<UserModel, User>();
+            CreateMap<SignupModel, User>();
         }
     }
 }
