@@ -96,24 +96,21 @@ export class Home extends Component {
     }
 
     login() {
-
+        fetch(`${url}/Login`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.userLogIn)
+        })
+            .then(response => {
+                return response.json()
+            })
+            .then(json => {
+                console.log(json)
+            });
     }
-
-    //registration() {
-    //    fetch(`${url}/Registration`, {
-    //        method: 'POST',
-    //        headers: {
-    //            'Accept': 'application/json',
-    //            'Content-Type': 'application/json'
-    //        },
-    //        body: JSON.stringify(this.user)
-    //    })
-    //        .then(response => response.json())
-    //        .then(data => {
-    //            console.log(data);
-    //        })
-    //        .catch(error => console.error('Unable to log in.', error));
-    //}
 
     render() {
         return (

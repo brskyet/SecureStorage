@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using SecureStorage.Data;
 using SecureStorage.Models;
+using SecureStorage.Services;
 
 namespace SecureStorage.Controllers
 {
@@ -26,7 +31,7 @@ namespace SecureStorage.Controllers
         [HttpPost("Signup")]
         public IActionResult Signup([FromBody] SignupModel usr)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -53,6 +58,37 @@ namespace SecureStorage.Controllers
             {
                 return BadRequest("An error was detected.");
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public ActionResult<string> Post(LoginModel authRequest, [FromServices] IJwtSigningEncodingKey signingEncodingKey)
+        {
+            // Проверяем данные пользователя из запроса.
+            bool userExist = _context.Users.Any(x => x.Username == authRequest.Username && x.Password == authRequest.Password);
+
+            if (userExist == false)
+                return BadRequest("Enter valid username and password.");
+
+            // Создаем утверждения для токена.
+            var claims = new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, authRequest.Username)
+            };
+
+            // Генерируем JWT.
+            var token = new JwtSecurityToken(
+                issuer: "SecureStorage",
+                audience: "secure_storage",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(1),
+                signingCredentials: new SigningCredentials(
+                        signingEncodingKey.GetKey(),
+                        signingEncodingKey.SigningAlgorithm)
+            );
+
+            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwtToken;
         }
     }
 }
