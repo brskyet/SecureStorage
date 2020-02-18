@@ -88,6 +88,14 @@ namespace SecureStorage.Controllers
             );
 
             string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+            HttpContext.Response.Cookies.Append(".AspNetCore.Application.Id", jwtToken,
+                new CookieOptions
+                {
+                    Secure = true,
+                    HttpOnly = true,
+                    MaxAge = TimeSpan.FromMinutes(1)
+                }
+            );
             return jwtToken;
         }
     }

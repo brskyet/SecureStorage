@@ -103,13 +103,7 @@ export class Home extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this.userLogIn)
-        })
-            .then(response => {
-                return response.json()
-            })
-            .then(json => {
-                console.log(json)
-            });
+        });
     }
 
     render() {

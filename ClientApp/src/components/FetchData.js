@@ -5,9 +5,13 @@ export class FetchData extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { forecasts: [], loading: true };
+      this.state = {
+          forecasts: [], loading: true
+      };
 
-    fetch('api/SampleData/WeatherForecasts')
+      fetch('api/SampleData/WeatherForecasts', {
+          credentials: 'include'
+      })
       .then(response => response.json())
       .then(data => {
         this.setState({ forecasts: data, loading: false });
