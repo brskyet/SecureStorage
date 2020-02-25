@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
-import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
+import { MainPage } from './components/MainPage';
 import PrivateRoute from './components/PrivateRoute';
 
 export default class App extends Component {
@@ -11,7 +7,7 @@ export default class App extends Component {
 
     render() {
         return (
-            <Route exact path='/' component={Home} />
+            <PrivateRoute component={MainPage} />
         );
     }
 }

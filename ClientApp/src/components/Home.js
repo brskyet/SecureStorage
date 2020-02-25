@@ -108,6 +108,7 @@ export class Home extends Component {
                 if (response.ok) {
                     localStorage.setItem('status', true);
                     setTimeout(this.logout, 100000);
+                    window.location.reload();
                 }
             });
     }
@@ -156,7 +157,7 @@ export class Home extends Component {
                                         <input name="Password" placeholder="Password" type="Password" required value={this.state.LogInPassword} onChange={this.loginChangePassword} />
                                         <button className="btn btn-mode" onClick={this.login}>
                                             Log in
-                                    </button>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

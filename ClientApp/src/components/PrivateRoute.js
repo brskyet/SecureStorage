@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Component } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
+import { Home } from './Home';
 
 export default class PrivateRoute extends Component {
     constructor(props) {
@@ -18,7 +19,7 @@ export default class PrivateRoute extends Component {
                 if (localStorage.getItem('status') === 'true') {
                     return <Component {...props} />
                 } else {
-                    return <Redirect to={"/"} />
+                    return <Home />
                 }
             }} />
     }
