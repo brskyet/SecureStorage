@@ -12,7 +12,8 @@
     "react-scripts": "1.0.17",
     "rimraf": "^2.6.2",
     "react-validation-boo": "2.2.6",
-    "reactstrap": "7.1.0"
+    "reactstrap": "7.1.0",
+    "js-cookie": "^2.2.1"
   },
   "scripts": {
     "start": "set HTTPS=true && rimraf ./build && react-scripts start",

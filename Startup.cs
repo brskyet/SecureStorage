@@ -108,6 +108,13 @@ namespace SecureStorage
 
                 await next(); // TODO: разобраться со всем кодом, который не до конца понимаю
             });
+
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                HttpOnly = HttpOnlyPolicy.Always,
+                Secure = CookieSecurePolicy.Always
+            });
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -122,13 +129,6 @@ namespace SecureStorage
                 .AllowCredentials()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                MinimumSameSitePolicy = SameSiteMode.Strict,
-                HttpOnly = HttpOnlyPolicy.Always,
-                Secure = CookieSecurePolicy.Always
-            });
 
             app.UseSpa(spa =>
             {

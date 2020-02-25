@@ -103,7 +103,17 @@ export class Home extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this.userLogIn)
-        });
+        })
+            .then(response => {
+                if (response.ok) {
+                    localStorage.setItem('status', true);
+                    setTimeout(this.logout, 100000);
+                }
+            });
+    }
+
+    logout() {
+        localStorage.setItem('status', false);
     }
 
     render() {
