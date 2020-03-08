@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace SecureStorage.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     public class SampleDataController : Controller
     {
         private static string[] Summaries = new[]

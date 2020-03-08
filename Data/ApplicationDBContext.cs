@@ -5,6 +5,8 @@ namespace SecureStorage.Data
     public class ApplicationDBContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Account> Accounts { get; set; }
 
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
             : base(options)
