@@ -1,8 +1,13 @@
 import React, { Component, } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Grid, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import './Home.css';
 
 const url = "api/Login";
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export class Home extends Component {
     displayName = Home.name
@@ -11,23 +16,25 @@ export class Home extends Component {
         super(props);
         // Пришлось дублировать модели т.к. вложения в state не позволяют использовать setState
         this.state = {
-            SignUpUsername: "sobl",
-            SignUpPassword: "Do_1234567",
-            SignUpEmail: "gmail@gmail.com",
-            LogInUsername: "sobl",
-            LogInPassword: "Do_1234567",
+            SignUpUsername: "",
+            SignUpPassword: "",
+            SignUpEmail: "",
+            LogInUsername: "",
+            LogInPassword: "",
             Mode: false,
-            Active: false
+            Active: false,
+            validate_message_open: false,
+            message: ""
         };
 
         this.userSignUp = {
-            Email: "gmail@gmail.com",
-            Username: "sobl",
-            Password: "Do_1234567"
+            Email: "",
+            Username: "",
+            Password: ""
         }
         this.userLogIn = {
-            Username: "sobl",
-            Password: "Do_1234567"
+            Username: "",
+            Password: ""
         }
 
         this.toggle = this.toggle.bind(this);
@@ -38,6 +45,7 @@ export class Home extends Component {
         this.signupChangeEmail = this.signupChangeEmail.bind(this);
         this.signupChangeUsername = this.signupChangeUsername.bind(this);
         this.signupChangePassword = this.signupChangePassword.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     loginChangeUsername(event) {
@@ -90,7 +98,10 @@ export class Home extends Component {
             })
             .then(json => {
                 if (!this.Active) {
-                    alert(json);
+                    this.setState({
+                        message: json,
+                        validate_message_open: true
+                    })
                 }
             });
     }
@@ -107,8 +118,14 @@ export class Home extends Component {
             .then(response => {
                 if (response.ok) {
                     localStorage.setItem('status', true);
-                    setTimeout(this.logout, 100000);
+                    //setTimeout(this.logout, 1500000);
                     window.location.reload();
+                }
+                else {
+                    this.setState({
+                        message: "Failed to log in",
+                        validate_message_open: true
+                    })
                 }
             });
     }
@@ -117,34 +134,36 @@ export class Home extends Component {
         localStorage.setItem('status', false);
     }
 
+    handleClose() {
+        this.setState({ validate_message_open: false })
+    }
+
     render() {
         return (
             <div>
-                <div className={`container ${this.state.Mode ? 'log-in' : ''} ${this.state.Active ? 'active' : ''}`} >
-                    <div className="box"></div>
+                <Snackbar open={this.state.validate_message_open} autoHideDuration={5000} onClose={this.handleClose}>
+                    <Alert onClose={this.handleClose} severity="error">
+                        {this.state.message}
+                    </Alert>
+                </Snackbar>
+                <div className={`container ${this.state.Mode ? 'log-in' : ''} ${this.state.Active ? 'active' : ''}`}>
                     <div className="container-forms">
                         <div className="container-info">
                             <div className="info-item">
                                 <div className="table">
                                     <div className="table-cell">
-                                        <p>
-                                            Have an account?
-                                    </p>
-                                        <button className="btn" onClick={this.toggle}>
-                                            Log in
-                                    </button>
+                                        <p>Have an account?</p>
+                                        <Button className="btn" onClick={this.toggle}> Log in</Button>
                                     </div>
                                 </div>
                             </div>
                             <div className="info-item">
                                 <div className="table">
                                     <div className="table-cell">
-                                        <p>
-                                            Don't have an account?
-                                    </p>
-                                        <button className="btn" onClick={this.toggle}>
-                                            Sign up
-                                    </button>
+                                        <Grid container justify="center" alignItems="center" >
+                                            <p>Don't have an account?</p>
+                                            <Button className="btn" onClick={this.toggle}>Sign up</Button>
+                                        </Grid>
                                     </div>
                                 </div>
                             </div>
@@ -155,28 +174,30 @@ export class Home extends Component {
                                     <div className="table-cell">
                                         <input name="Username" placeholder="Username" type="text" required value={this.state.LogInUsername} onChange={this.loginChangeUsername} />
                                         <input name="Password" placeholder="Password" type="Password" required value={this.state.LogInPassword} onChange={this.loginChangePassword} />
-                                        <button className="btn btn-mode" onClick={this.login}>
-                                            Log in
-                                        </button>
+                                        <Grid container justify="center" alignItems="center" >
+                                            <Button className="btn" onClick={this.login}>Log in</Button>
+                                        </Grid>
                                     </div>
                                 </div>
                             </div>
                             <div className="form-item sign-up">
                                 <div className="table">
                                     <div className="table-cell">
-                                        <input name="email" placeholder="Email" type="email" required required value={this.state.SignUpEmail} onChange={this.signupChangeEmail} />
-                                        <input name="Username" placeholder="Username" type="text" required pattern="^[a-zA-Z0-9_]{3,18}$" required value={this.state.SignUpUsername} onChange={this.signupChangeUsername} />
-                                        <input name="Password" id="mainPassword" placeholder="Password" type="Password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&_]{8,50}$" required value={this.state.SignUpPassword} onChange={this.signupChangePassword} />
-                                        <button className="btn btn-mode" onClick={this.signup}>
-                                            Sign up
-                                    </button>
+                                        <input name="email" placeholder="Email" type="email" required value={this.state.SignUpEmail} onChange={this.signupChangeEmail} />
+                                        <input name="Username" placeholder="Username" type="text" pattern="^[a-zA-Z0-9_]{3,18}$" required value={this.state.SignUpUsername} onChange={this.signupChangeUsername} />
+                                        <input name="Password" id="mainPassword" placeholder="Password" type="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&_]{8,50}$" required value={this.state.SignUpPassword} onChange={this.signupChangePassword} />
+                                        <Grid container justify="center" alignItems="center" >
+                                            <Button className="btn" onClick={this.signup}>Sign up</Button>
+                                        </Grid>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className={`btnContainer ${this.state.Active ? 'visible' : 'hidden'}`}><Button className="btn-start" href="/">Log in</Button></div>
+                <Grid container justify="center" alignItems="center">
+                    <div className={`log-in-btn ${this.state.Active ? 'visible' : 'hidden'}`}><Button className="btn" href="/">Log in</Button></div>
+                </Grid>
             </div>
         );
     }

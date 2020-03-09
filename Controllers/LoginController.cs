@@ -81,7 +81,7 @@ namespace SecureStorage.Controllers
                 issuer: "SecureStorage",
                 audience: "secure_storage",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: new SigningCredentials(
                         signingEncodingKey.GetKey(),
                         signingEncodingKey.SigningAlgorithm)
@@ -93,7 +93,7 @@ namespace SecureStorage.Controllers
                 {
                     Secure = true,
                     HttpOnly = true,
-                    MaxAge = TimeSpan.FromMinutes(1)
+                    MaxAge = TimeSpan.FromMinutes(15)
                 }
             );
             return jwtToken;

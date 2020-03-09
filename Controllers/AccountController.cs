@@ -73,8 +73,9 @@ namespace SecureStorage.Controllers
                 return BadRequest("An error was detected.");
             }
         }
+
         [HttpPost("UpdateAccounts")]
-        public IActionResult UpdateAccounts([FromBody] UserDto usr)
+        public IActionResult UpdateAccounts([FromBody] List<CategoryDto> lst)
         {
             try
             {
@@ -85,8 +86,8 @@ namespace SecureStorage.Controllers
                     if (!_context.Users.Any(x => x.Username == username))
                         return BadRequest("Username is not valid.");
 
+                    var usr = new UserDto { Categories = lst, Username = username };
                     var model = _mapper.Map<User>(usr);
-                    model.Username = username;
                     _context.Update(model);
                     _context.SaveChanges();
                     return Ok();

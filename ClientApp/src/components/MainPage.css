@@ -1,0 +1,86 @@
+﻿@charset "UTF-8";
+
+html {
+    font-size: initial;
+}
+
+.MuiTypography-body1 {
+    border: 2px solid;
+    border-color: #999EDE;
+    padding: 5px;
+    margin: 2px !important;
+    border-radius: 5px;
+    background-color: #ffffff !important;
+}
+
+.btn {
+    cursor: pointer;
+    text-align: center;
+    background-color: #ff73b3 !important;
+    border: 1px solid #fff;
+    opacity: 0.7;
+    box-shadow: 0 0 10px 1px #ff73b3;
+    border-radius: 5px;
+    width: 100px;
+}
+
+.btn-log-out {
+    margin: 5px 30px 0 0 !important;
+
+}
+
+.btn-save-cancel {
+    margin: 5px 5px 5px 5px !important;
+}
+
+.main-container {
+    width: 80%;
+    margin: 40px auto !important;
+}
+
+.nested-element {
+    width: 99% !important;
+    margin: auto;
+}
+
+.MuiTreeItem-label {
+    border-left: 0;
+    border-top-left-radius: 0;
+}
+
+.arrow-icon {
+    border: 2px solid;
+    border-right: 0;
+    border-color: #999EDE;
+    border-radius: 5px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #ffffff;
+    width: 1.85em !important;
+    height: 1.70em !important;
+    margin: 0px 0px 2px 0px;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.MuiInputBase-input {
+    padding: 6px 0 7px 0 !important;
+}
+
+.button-group {
+    margin: 50px 0 0 0;
+}
+
+.cell-for-button {
+    width: 20px;
+}
+
+.MuiDialogContentText-root {
+    border: 0;
+}
