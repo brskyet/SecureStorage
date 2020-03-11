@@ -274,7 +274,7 @@ export class MainPage extends Component {
 
     add_category_confirm() {
         var newCategories = this.state.categories
-        newCategories.push({ accounts: [{ username: "", password: "", title: "", edit_mode: true }], categoryName: this.state.new_category_name, has_new_item: true })
+        newCategories.push({ accounts: [], categoryName: this.state.new_category_name, has_new_item: false })
         this.setState({
             categories: newCategories,
             add_dialog: false
@@ -282,7 +282,7 @@ export class MainPage extends Component {
     }
 
     onAddCategory() {
-        this.setState({ add_dialog: true });
+        this.setState({ add_dialog: true, new_category_name: "" });
     }
 
     onNewCategoryChanged(event) {
@@ -301,7 +301,7 @@ export class MainPage extends Component {
                         Log out
                     </Button>
                 </Grid>
-                
+
                 <Dialog open={this.state.add_dialog} onClose={this.add_dialog_close} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Add category</DialogTitle>
                     <DialogContent>
@@ -394,62 +394,61 @@ export class MainPage extends Component {
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        {c.accounts.map(a =>
-                                                            (
-                                                                !a.edit_mode && !a.delete_mode ?
-                                                                    <TableRow key={c.accounts.indexOf(a)}>
-                                                                        <TableCell align="center">
-                                                                            <IconButton disabled={this.state.global_mode && (!a.delete_mode || !a.edit_mode)}
-                                                                                aria-label="edit" size="medium"
-                                                                                onClick={() => { this.edit(this.state.categories.indexOf(c), c.accounts.indexOf(a)) }}>
-                                                                                <Edit />
-                                                                            </IconButton>
-                                                                            <IconButton disabled={this.state.global_mode && (!a.delete_mode || !a.edit_mode)}
-                                                                                aria-label="delete" size="medium"
-                                                                                onClick={() => { this.delete(this.state.categories.indexOf(c), c.accounts.indexOf(a)) }}>
-                                                                                <Delete />
-                                                                            </IconButton>
-                                                                        </TableCell>
-                                                                        <TableCell align="center"><TextField value={a.title} readOnly /></TableCell>
-                                                                        <TableCell align="center"><TextField value={a.username} readOnly /></TableCell>
-                                                                        <TableCell align="center">
-                                                                            <TextField type={a.password_visibility ? "text" : "password"} value={a.password} readOnly />
-                                                                            <IconButton aria-label="Show/Hide" size="medium"
-                                                                                onClick={() => { this.switch_visibility(this.state.categories.indexOf(c), c.accounts.indexOf(a)) }}>
-                                                                                {a.password_visibility ? <Visibility /> : <VisibilityOff />}
-                                                                            </IconButton>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                    :
-                                                                    <TableRow key={c.accounts.indexOf(a)}>
-                                                                        <TableCell align="center">
-                                                                            <IconButton aria-label="done" size="medium" onClick={() => {
-                                                                                !a.delete_mode ? this.admit_edit(this.state.categories.indexOf(c), c.accounts.indexOf(a))
-                                                                                    : this.admit_delete(this.state.categories.indexOf(c), c.accounts.indexOf(a))
-                                                                            }}>
-                                                                                <Done />
-                                                                            </IconButton>
-                                                                            <IconButton aria-label="cancel" size="medium" onClick={() => {
-                                                                                !a.delete_mode ? this.cancel_edit(this.state.categories.indexOf(c), c.accounts.indexOf(a))
-                                                                                    : this.cancel_delete(this.state.categories.indexOf(c), c.accounts.indexOf(a))
-                                                                            }}>
-                                                                                <Close />
-                                                                            </IconButton>
-                                                                        </TableCell>
-                                                                        <TableCell align="center"><TextField disabled={a.delete_mode} value={this.state.temp_title}
-                                                                            onChange={this.onTempTitleChange} /></TableCell>
-                                                                        <TableCell align="center"><TextField disabled={a.delete_mode} required value={this.state.temp_username}
-                                                                            onChange={this.onTempUsernameChange} /></TableCell>
-                                                                        <TableCell align="center">
-                                                                            <TextField autoComplete="new-password" disabled={a.delete_mode} required
-                                                                                type={this.state.temp_password_visibility ? "text" : "password"} value={this.state.temp_password}
-                                                                                onChange={this.onTempPasswordChange} />
-                                                                            <IconButton aria-label="Show/Hide" size="medium" onClick={() => { this.switch_temp_visibility() }}>
-                                                                                {a.password_visibility ? <Visibility /> : <VisibilityOff />}
-                                                                            </IconButton>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                            )
+                                                        {c.accounts.map(a => (
+                                                            !a.edit_mode && !a.delete_mode ?
+                                                                <TableRow key={c.accounts.indexOf(a)}>
+                                                                    <TableCell align="center">
+                                                                        <IconButton disabled={this.state.global_mode && (!a.delete_mode || !a.edit_mode)}
+                                                                            aria-label="edit" size="medium"
+                                                                            onClick={() => { this.edit(this.state.categories.indexOf(c), c.accounts.indexOf(a)) }}>
+                                                                            <Edit />
+                                                                        </IconButton>
+                                                                        <IconButton disabled={this.state.global_mode && (!a.delete_mode || !a.edit_mode)}
+                                                                            aria-label="delete" size="medium"
+                                                                            onClick={() => { this.delete(this.state.categories.indexOf(c), c.accounts.indexOf(a)) }}>
+                                                                            <Delete />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                    <TableCell align="center"><TextField value={a.title} readOnly /></TableCell>
+                                                                    <TableCell align="center"><TextField value={a.username} readOnly /></TableCell>
+                                                                    <TableCell align="center">
+                                                                        <TextField type={a.password_visibility ? "text" : "password"} value={a.password} readOnly />
+                                                                        <IconButton aria-label="Show/Hide" size="medium"
+                                                                            onClick={() => { this.switch_visibility(this.state.categories.indexOf(c), c.accounts.indexOf(a)) }}>
+                                                                            {a.password_visibility ? <Visibility /> : <VisibilityOff />}
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                                :
+                                                                <TableRow key={c.accounts.indexOf(a)}>
+                                                                    <TableCell align="center">
+                                                                        <IconButton aria-label="done" size="medium" onClick={() => {
+                                                                            !a.delete_mode ? this.admit_edit(this.state.categories.indexOf(c), c.accounts.indexOf(a))
+                                                                                : this.admit_delete(this.state.categories.indexOf(c), c.accounts.indexOf(a))
+                                                                        }}>
+                                                                            <Done />
+                                                                        </IconButton>
+                                                                        <IconButton aria-label="cancel" size="medium" onClick={() => {
+                                                                            !a.delete_mode ? this.cancel_edit(this.state.categories.indexOf(c), c.accounts.indexOf(a))
+                                                                                : this.cancel_delete(this.state.categories.indexOf(c), c.accounts.indexOf(a))
+                                                                        }}>
+                                                                            <Close />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                    <TableCell align="center"><TextField disabled={a.delete_mode} value={this.state.temp_title}
+                                                                        onChange={this.onTempTitleChange} /></TableCell>
+                                                                    <TableCell align="center"><TextField disabled={a.delete_mode} required value={this.state.temp_username}
+                                                                        onChange={this.onTempUsernameChange} /></TableCell>
+                                                                    <TableCell align="center">
+                                                                        <TextField autoComplete="new-password" disabled={a.delete_mode} required
+                                                                            type={this.state.temp_password_visibility ? "text" : "password"} value={this.state.temp_password}
+                                                                            onChange={this.onTempPasswordChange} />
+                                                                        <IconButton aria-label="Show/Hide" size="medium" onClick={() => { this.switch_temp_visibility() }}>
+                                                                            {a.password_visibility ? <Visibility /> : <VisibilityOff />}
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                        )
                                                         )}
                                                     </TableBody>
                                                     <TableFooter>

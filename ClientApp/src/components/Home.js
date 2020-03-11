@@ -24,7 +24,8 @@ export class Home extends Component {
             Mode: false,
             Active: false,
             validate_message_open: false,
-            message: ""
+            message: "",
+            type_of_message: "error"
         };
 
         this.userSignUp = {
@@ -91,18 +92,29 @@ export class Home extends Component {
             .then(response => {
                 if (response.ok) {
                     this.setState({
-                        Active: true
-                    });
+                        Active: true,
+                        type_of_message: "success"
+                    })
+                }
+                else {
+                    this.setState({
+                        type_of_message: "error"
+                    })
                 }
                 return response.json()
             })
             .then(json => {
-                if (!this.Active) {
-                    this.setState({
-                        message: json,
-                        validate_message_open: true
-                    })
-                }
+                this.setState({
+                    message: json,
+                    validate_message_open: true
+                })
+            })
+            .catch(() => {
+                this.setState({
+                    type_of_message: "error",
+                    message: "An error has occurred. Please, try again",
+                    validate_message_open: true
+                })
             });
     }
 
@@ -118,15 +130,22 @@ export class Home extends Component {
             .then(response => {
                 if (response.ok) {
                     localStorage.setItem('status', true);
-                    //setTimeout(this.logout, 1500000);
                     window.location.reload();
                 }
                 else {
                     this.setState({
                         message: "Failed to log in",
+                        type_of_message: "error",
                         validate_message_open: true
                     })
                 }
+            })
+            .catch(() => {
+                this.setState({
+                    type_of_message: "error",
+                    message: "An error has occurred. Please, try again",
+                    validate_message_open: true
+                })
             });
     }
 
@@ -142,7 +161,7 @@ export class Home extends Component {
         return (
             <div>
                 <Snackbar open={this.state.validate_message_open} autoHideDuration={5000} onClose={this.handleClose}>
-                    <Alert onClose={this.handleClose} severity="error">
+                    <Alert onClose={this.handleClose} severity={this.state.type_of_message}>
                         {this.state.message}
                     </Alert>
                 </Snackbar>

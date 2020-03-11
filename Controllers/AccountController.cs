@@ -31,26 +31,6 @@ namespace SecureStorage.Controllers
         {
             try
             {
-                //var model1 = _context.Users.First(x => x.Username == username);
-                //model1.Categories = new List<Category>()
-                //{
-                //    new Category()
-                //    {
-                //        CategoryName = "games", Accounts = new List<Account>()
-                //        {
-                //            new Account()
-                //            {
-                //                Title = "wow", Username = "test1", Password = "test1"
-                //            },
-                //            new Account()
-                //            {
-                //                Title = "ff14", Username = "test2", Password = "test2"
-                //            }
-                //        }
-                //    }
-                //};
-                //_context.Update(model1);
-                //_context.SaveChanges();
                 string username = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.NameIdentifier)).Value;
                 if (username != null)
                 {
@@ -75,19 +55,18 @@ namespace SecureStorage.Controllers
         }
 
         [HttpPost("UpdateAccounts")]
-        public IActionResult UpdateAccounts([FromBody] List<CategoryDto> lst)
+        public IActionResult UpdateAccounts([FromBody] List<CategoryDto> categoriesDto)
         {
             try
             {
                 string username = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.NameIdentifier)).Value;
                 if (username != null)
                 {
-
                     if (!_context.Users.Any(x => x.Username == username))
                         return BadRequest("Username is not valid.");
-
-                    var usr = new UserDto { Categories = lst, Username = username };
-                    var model = _mapper.Map<User>(usr);
+                    var model = _context.Users.First(x => x.Username == username);
+                    var categories = _mapper.Map<List<Category>>(categoriesDto);
+                    model.Categories = categories;
                     _context.Update(model);
                     _context.SaveChanges();
                     return Ok();
