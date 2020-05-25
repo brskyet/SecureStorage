@@ -12,6 +12,7 @@ namespace SecureStorage.Data
         public string Username { set; get; }
         public string Email { set; get; }
         public string Password { set; get; }
+        public string Salt { set; get; }
         public List<Category> Categories { set; get; }
     }
 

@@ -231,7 +231,7 @@ export class MainPage extends Component {
     save_changes() {
         fetch(`${url}/UpdateAccounts`, {
             method: 'POST',
-            credentials: 'include', // include, *same-origin, omit
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },

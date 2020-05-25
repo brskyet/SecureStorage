@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using SecureStorage.Data;
 using SecureStorage.Models;
 using SecureStorage.Services;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SecureStorage.Controllers
 {
@@ -40,6 +43,21 @@ namespace SecureStorage.Controllers
                     bool emailExist = _context.Users.Any(x => x.Email == model.Email);
                     if (userExist == false && emailExist == false)
                     {
+                        byte[] salt = new byte[16];
+                        using (var rng = RandomNumberGenerator.Create())
+                        {
+                            rng.GetBytes(salt);
+                        }
+                        model.Salt = Convert.ToBase64String(salt);
+
+                        string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                            password: model.Password,
+                            salt: salt,
+                            prf: KeyDerivationPrf.HMACSHA1,
+                            iterationCount: 10000,
+                            numBytesRequested: 16));
+
+                        model.Password = hashedPassword;
                         _context.Add(model);
                         _context.SaveChanges();
                         return Ok("Registered successfully!");
@@ -64,19 +82,28 @@ namespace SecureStorage.Controllers
         [HttpPost("Login")]
         public ActionResult<string> Post(LoginModel authRequest, [FromServices] IJwtSigningEncodingKey signingEncodingKey)
         {
-            // Проверяем данные пользователя из запроса.
-            bool userExist = _context.Users.Any(x => x.Username == authRequest.Username && x.Password == authRequest.Password);
-
+            // Check if user is exist
+            User user = _context.Users.FirstOrDefault(x => x.Username == authRequest.Username);
+            if(user == null)
+                return BadRequest("Enter valid username and password.");
+            // Check if auth data are valid
+            string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: authRequest.Password,
+                salt: Convert.FromBase64String(user.Salt),
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 16));
+            bool userExist = _context.Users.Any(x => x.Username == authRequest.Username && x.Password == hashedPassword);
             if (userExist == false)
                 return BadRequest("Enter valid username and password.");
 
-            // Создаем утверждения для токена.
+            // Create claims for token
             var claims = new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, authRequest.Username)
             };
 
-            // Генерируем JWT.
+            // Generate JWT
             var token = new JwtSecurityToken(
                 issuer: "SecureStorage",
                 audience: "secure_storage",

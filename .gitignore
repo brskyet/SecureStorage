@@ -499,3 +499,4 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/react,aspnetcore,visualstudio
+ClientApp/public/Thumbs.db

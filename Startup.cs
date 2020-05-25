@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,12 @@ namespace SecureStorage
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            // Enforcing SSL Globally
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -44,6 +51,9 @@ namespace SecureStorage
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            IDataProtectionProvider dataProtectionProvider = DataProtectionProvider.Create("SecureStorage");
+            services.AddSingleton(dataProtectionProvider);
 
             const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230"; //TODO: поменять ключ.
             var signingKey = new SigningSymmetricKey(signingSecurityKey);
@@ -107,6 +117,12 @@ namespace SecureStorage
                     context.Request.Headers.Add("Authorization", "Bearer " + token);
 
                 await next(); // TODO: разобраться со всем кодом, который не до конца понимаю
+            });
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "DENY"); //This prevents the browser from showing this page in a frame
+                await next();
             });
 
             app.UseCookiePolicy(new CookiePolicyOptions
