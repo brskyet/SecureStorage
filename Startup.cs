@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SecureStorage.Data;
+using SecureStorage.Interfaces;
 using SecureStorage.Services;
 using System;
 
@@ -55,43 +56,16 @@ namespace SecureStorage
             IDataProtectionProvider dataProtectionProvider = DataProtectionProvider.Create("SecureStorage");
             services.AddSingleton(dataProtectionProvider);
 
-            const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230"; //TODO: помен€ть ключ.
-            var signingKey = new SigningSymmetricKey(signingSecurityKey);
-            services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
-
-            var signingDecodingKey = (IJwtSigningDecodingKey)signingKey;
-            services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
-                {
-                    jwtBearerOptions.RequireHttpsMetadata = true;
-                    jwtBearerOptions.SaveToken = true;
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = signingDecodingKey.GetKey(),
-
-                        ValidateIssuer = true,
-                        ValidIssuer = "SecureStorage",
-
-                        ValidateAudience = true,
-                        ValidAudience = "secure_storage",
-
-                        ValidateLifetime = true,
-
-                        ClockSkew = TimeSpan.FromSeconds(5)
-                    };
-                });
+            // custom method for configure jwt
+            services.ConfigureJwtAuth();
 
             services.AddCors();
 
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("ConnectionName")));
+
+            services.AddScoped<IAccounts, Accounts>();
+            services.AddScoped<ILogin, Login>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -112,11 +86,11 @@ namespace SecureStorage
             app.UseSpaStaticFiles();
             app.Use(async (context, next) =>
             {
-                var token = context.Request.Cookies[".AspNetCore.Application.Id"]; // Ќеприметное название дл€ куки
+                var token = context.Request.Cookies[".AspNetCore.Application.Id"];
                 if (!string.IsNullOrEmpty(token))
                     context.Request.Headers.Add("Authorization", "Bearer " + token);
 
-                await next(); // TODO: разобратьс€ со всем кодом, который не до конца понимаю
+                await next();
             });
 
             app.Use(async (context, next) =>
@@ -141,7 +115,7 @@ namespace SecureStorage
             });
 
             app.UseCors(x => x
-                .WithOrigins("https://localhost:44350") // TODO: ”брать жесткую прив€зку к адресу.
+                .WithOrigins("https://localhost:44350")
                 .AllowCredentials()
                 .AllowAnyMethod()
                 .AllowAnyHeader());

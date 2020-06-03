@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace SecureStorage.Services
+namespace SecureStorage.Interfaces
 {
-    // Ключ для создания подписи (приватный)
+    // Private key for signature
     public interface IJwtSigningEncodingKey
     {
         string SigningAlgorithm { get; }
@@ -10,7 +10,7 @@ namespace SecureStorage.Services
         SecurityKey GetKey();
     }
 
-    // Ключ для проверки подписи (публичный)
+    // Public key for signature verification
     public interface IJwtSigningDecodingKey
     {
         SecurityKey GetKey();
