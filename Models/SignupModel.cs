@@ -17,10 +17,5 @@ namespace SecureStorage.Models
         [Required(ErrorMessage = "Не указан пароль.")]
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@$!%*#?&_]{8,50}$", ErrorMessage = "Пароль не соответствует требованиям.")]
         public string Password { set; get; }
-        //[Required(ErrorMessage = "Не указан пароль.")]
-        //[Compare("Password", ErrorMessage = "Пароли не совпадают")]
-        //public string ConfirmPassword { set; get; }
-        //[Range(1, 110, ErrorMessage = "Недопустимый возраст")]
-        //public int Age { set; get; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SecureStorage.Interfaces;
@@ -11,9 +13,8 @@ namespace SecureStorage.Services
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureJwtAuth(this IServiceCollection services)
+        public static void ConfigureJwtAuth(this IServiceCollection services, string signingSecurityKey)
         {
-            const string signingSecurityKey = "0d5bsg35a8b403c3dab9c3fs015c07fcalskd234n1k41230";
             var signingKey = new SigningSymmetricKey(signingSecurityKey);
             services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
             var signingDecodingKey = (IJwtSigningDecodingKey)signingKey;

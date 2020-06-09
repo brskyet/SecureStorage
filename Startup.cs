@@ -57,7 +57,7 @@ namespace SecureStorage
             services.AddSingleton(dataProtectionProvider);
 
             // custom method for configure jwt
-            services.ConfigureJwtAuth();
+            services.ConfigureJwtAuth(Configuration["EncryptSettings:SigningSecurityKey"]);
 
             services.AddCors();
 
